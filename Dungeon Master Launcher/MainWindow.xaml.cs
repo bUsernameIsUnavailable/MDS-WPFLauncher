@@ -13,7 +13,7 @@ namespace Dungeon_Master_Launcher
         Ready,
         Failed,
         DownloadingGame,
-        DownloadingUpdate
+        UpdatingGame
     }
     
     public partial class MainWindow
@@ -38,7 +38,7 @@ namespace Dungeon_Master_Launcher
                     LauncherStatus.Ready => "Play",
                     LauncherStatus.Failed => "Update Failed - Retry",
                     LauncherStatus.DownloadingGame => "Downloading Game...",
-                    LauncherStatus.DownloadingUpdate => "Downloading Update...",
+                    LauncherStatus.UpdatingGame => "Updating Game...",
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }
@@ -84,7 +84,7 @@ namespace Dungeon_Master_Launcher
             }
             
             var localVersion = new Version(File.ReadAllText(_versionFile));
-            VersionLabel.Text = $"v{localVersion.ToString()}";
+            VersionLabel.Text = $"v{localVersion}";
 
             try
             {
@@ -107,24 +107,20 @@ namespace Dungeon_Master_Launcher
 
         private void InstallGameFiles(bool isUpdate, Version? remoteVersion = null)
         {
-            remoteVersion ??= Version.Zero;
-
             try
             {
+                Status = isUpdate ?
+                    LauncherStatus.UpdatingGame :
+                    LauncherStatus.DownloadingGame;
+                
                 var webClient = new WebClient();
-
-                if (isUpdate)
-                {
-                    Status = LauncherStatus.DownloadingUpdate;
-                }
-                else
-                {
-                    Status = LauncherStatus.DownloadingGame;
-                    remoteVersion = new Version(webClient.DownloadString(VersionTxtLink));
-                }
-
                 webClient.DownloadFileCompleted += GameDownloadCompletedCallback;
-                webClient.DownloadFileAsync(new Uri(BuildZipLink), _gameZip, remoteVersion);
+                webClient.DownloadFileAsync(
+                    new Uri(BuildZipLink),
+                    _gameZip,
+                    isUpdate ? 
+                        remoteVersion ?? Version.Zero :
+                        new Version(webClient.DownloadString(VersionTxtLink)));
             }
             catch (Exception ex)
             {
@@ -210,7 +206,7 @@ namespace Dungeon_Master_Launcher
 
         public override bool Equals(object obj)
         {
-            return obj != null && Equals((Version) obj);
+            return Equals((Version) obj);
         }
 
         public override int GetHashCode()
