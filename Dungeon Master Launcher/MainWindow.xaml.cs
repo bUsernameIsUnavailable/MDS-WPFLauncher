@@ -154,7 +154,7 @@ namespace Dungeon_Master_Launcher
                 
                 var remoteVersion = ((Version) e.UserState).ToString();
                 File.WriteAllText(_versionFile, remoteVersion);
-                VersionLabel.Text = remoteVersion;
+                VersionLabel.Text = $"v{remoteVersion}";
                 
                 Status = LauncherStatus.Ready;
             }
@@ -199,7 +199,7 @@ namespace Dungeon_Master_Launcher
 
         public static bool operator ==(Version version1, Version version2)
         {
-            if (ReferenceEquals(version1, null) || ReferenceEquals(version2, null))
+            if (version1 is null || version2 is null)
             {
                 return false;
             }
@@ -243,7 +243,7 @@ namespace Dungeon_Master_Launcher
 
         public override string ToString()
         {
-            return $"v{_major}.{_minor}.{_subminor}";
+            return $"{_major}.{_minor}.{_subminor}";
         }
     }
 }
