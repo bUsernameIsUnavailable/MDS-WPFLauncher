@@ -9,8 +9,7 @@
         Title="Launcher" Height="576" Width="1080">
     <Grid>
         <Image Stretch="UniformToFill"
-               Source="Images/LauncherBackground.png"
-               HorizontalAlignment="Right" />
+               Source="Images/LauncherBackground.png" />
         <TextBlock Name="VersionLabel"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Right"

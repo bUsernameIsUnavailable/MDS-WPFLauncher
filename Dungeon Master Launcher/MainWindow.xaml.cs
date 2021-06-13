@@ -18,9 +18,9 @@ namespace Dungeon_Master_Launcher
     
     public partial class MainWindow
     {
-        private const string BuildZipLink = "";
-        private const string VersionTxtLink = "";
-        
+        private const string BuildZipLink = "https://drive.google.com/uc?id=1x9FYc4Y5Z8WsA38qqcTGEt4RtbkYiuuf";
+        private const string VersionTxtLink = "https://drive.google.com/uc?id=1a9iadcTlxFeA5o0KRsVIaO4AF4EZyN_u";
+
         private readonly string _rootPath;
         private readonly string _versionFile;
         private readonly string _gameZip;
@@ -60,7 +60,7 @@ namespace Dungeon_Master_Launcher
             _rootPath = Directory.GetCurrentDirectory();
             _versionFile = Path.Combine(_rootPath, "Version.txt");
             _gameZip = Path.Combine(_rootPath, "Build.zip");
-            _gameExe = Path.Combine(_rootPath, "Build", "Dungeon Master.exe");
+            _gameExe = Path.Combine(_rootPath, "Build", "DungeonMaster.exe");
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
