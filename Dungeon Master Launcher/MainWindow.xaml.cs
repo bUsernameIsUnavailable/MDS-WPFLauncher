@@ -84,7 +84,7 @@ namespace Dungeon_Master_Launcher
             }
             
             var localVersion = new Version(File.ReadAllText(_versionFile));
-            VersionLabel.Text = localVersion.ToString();
+            VersionLabel.Text = $"v{localVersion.ToString()}";
 
             try
             {
