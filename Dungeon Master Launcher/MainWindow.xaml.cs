@@ -33,23 +33,14 @@ namespace Dungeon_Master_Launcher
             set
             {
                 _status = value;
-                switch (_status)
+                PlayButton.Content = _status switch
                 {
-                    case LauncherStatus.Ready:
-                        PlayButton.Content = "Play";
-                        break;
-                    case LauncherStatus.Failed:
-                        PlayButton.Content = "Update Failed - Retry";
-                        break;
-                    case LauncherStatus.DownloadingGame:
-                        PlayButton.Content = "Downloading Game...";
-                        break;
-                    case LauncherStatus.DownloadingUpdate:
-                        PlayButton.Content = "Downloading Update...";
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                    LauncherStatus.Ready => "Play",
+                    LauncherStatus.Failed => "Update Failed - Retry",
+                    LauncherStatus.DownloadingGame => "Downloading Game...",
+                    LauncherStatus.DownloadingUpdate => "Downloading Update...",
+                    _ => throw new ArgumentOutOfRangeException()
+                };
             }
         }
         
@@ -114,12 +105,9 @@ namespace Dungeon_Master_Launcher
             }
         }
 
-        private void InstallGameFiles(bool isUpdate, Version remoteVersion = null)
+        private void InstallGameFiles(bool isUpdate, Version? remoteVersion = null)
         {
-            if (remoteVersion == null)
-            {
-                remoteVersion = Version.Zero;
-            }
+            remoteVersion ??= Version.Zero;
 
             try
             {
@@ -149,6 +137,12 @@ namespace Dungeon_Master_Launcher
         {
             try
             {
+                var buildDirectory = Path.Combine(_rootPath, "Build");
+                if (Directory.Exists(buildDirectory))
+                {
+                    Directory.Delete(buildDirectory, true);
+                }
+                
                 ZipFile.ExtractToDirectory(_gameZip, _rootPath);
                 File.Delete(_gameZip);
                 
@@ -166,9 +160,9 @@ namespace Dungeon_Master_Launcher
         }
     }
     
-    internal class Version : IEquatable<Version>
+    internal readonly struct Version : IEquatable<Version>
     {
-        internal static readonly Version Zero = new Version(0, 0, 0);
+        internal static readonly Version Zero = new(0, 0, 0);
 
         private readonly ushort _major;
         private readonly ushort _minor;
@@ -199,16 +193,6 @@ namespace Dungeon_Master_Launcher
 
         public static bool operator ==(Version version1, Version version2)
         {
-            if (version1 is null || version2 is null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(version1, version2))
-            {
-                return true;
-            }
-            
             return version1._major == version2._major
                    && version1._minor == version2._minor
                    && version1._subminor == version2._subminor;
@@ -226,7 +210,7 @@ namespace Dungeon_Master_Launcher
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as Version);
+            return obj != null && Equals((Version) obj);
         }
 
         public override int GetHashCode()
